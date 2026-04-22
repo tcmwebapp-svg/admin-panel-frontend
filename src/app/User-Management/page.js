@@ -66,7 +66,7 @@ const StaffData = [
   },
 ];
 
-const PROTECTED_EMAIL = "info@mdssupport.co.uk";
+const PROTECTED_EMAILS = ["info@mdssupport.co.uk", "operations@tcmcareservices.com"];
 
 const Page = () => {
   const { user, logout } = useAuth();
@@ -324,7 +324,7 @@ const handleChange6 = (e) => {
   const handleDelete = (id) => {
     // 🔒 Protect the permanent system user
     const targetUser = StaffData.find((u) => u._id === id);
-    if (targetUser?.email === PROTECTED_EMAIL) {
+    if (targetUser && targetUser.email && PROTECTED_EMAILS.includes(targetUser.email.toLowerCase())) {
       toast.error("This user is protected and cannot be deleted.");
       return;
     }
@@ -603,7 +603,7 @@ useEffect(() => {
                           {item.role}
                         </td>
                         <td className="px-6 py-4">
-                          {item.email === PROTECTED_EMAIL ? (
+                          {item.email && PROTECTED_EMAILS.includes(item.email.toLowerCase()) ? (
                             // 🔒 Protected user — view only
                             <div className="flex items-center gap-2">
                               <span className="flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-900/40 border border-emerald-700 px-2 py-1 rounded-full">
