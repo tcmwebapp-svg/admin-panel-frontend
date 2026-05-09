@@ -8,16 +8,21 @@ import {
   FaEye,
   FaTimes,
   FaArchive,
+  FaPaperclip,
 } from "react-icons/fa";
 import { MdVerifiedUser } from "react-icons/md";
+import { useAuth } from "@/app/context/AuthContext";
 
 const ResidentProfileConsentForm = ({ clientId }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Admin";
   const [consents, setConsents] = useState([]);
   const [archivedConsents, setArchivedConsents] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [viewConsent, setViewConsent] = useState(null);
   const [showArchived, setShowArchived] = useState(false);
+  const [attachments, setAttachments] = useState([]);
 
   const [form, setForm] = useState({
     dolsInPlace: "",
@@ -61,6 +66,7 @@ const ResidentProfileConsentForm = ({ clientId }) => {
   const resetForm = () => {
     setEditingId(null);
     setForm({ dolsInPlace: "", authorizationEndDate: "", conditions: "" });
+    setAttachments([]);
     setShowForm(false);
   };
 
@@ -243,7 +249,7 @@ const ResidentProfileConsentForm = ({ clientId }) => {
                         <div className="flex space-x-3 text-white text-sm relative">
                            <button onClick={() => handleView(record)} className="hover:text-blue-500 cursor-pointer" title="View"><FaEye /></button>
                            <button onClick={() => handleEdit(record)} className="hover:text-yellow-400 cursor-pointer" title="Edit"><FaEdit /></button>
-                           <button onClick={() => handleDelete(record._id)} className="hover:text-red-500 cursor-pointer" title="Delete"><FaTrash /></button>
+                           {isAdmin && <button onClick={() => handleDelete(record._id)} className="hover:text-red-500 cursor-pointer" title="Delete (Admin only)"><FaTrash /></button>}
                         </div>
                       </td>
                     </tr>
@@ -286,6 +292,22 @@ const ResidentProfileConsentForm = ({ clientId }) => {
                 <div className="flex justify-between pt-4">
                   <button type="button" onClick={resetForm} className="bg-gray-600 px-4 py-2 rounded text-white">Cancel</button>
                   <button type="submit" className="bg-indigo-600 px-4 py-2 rounded text-white">{editingId ? "Update Record" : "Save Record"}</button>
+                </div>
+
+                {/* ─── Supporting Documents ─── */}
+                <div className="border-t border-gray-600 pt-4 mt-2">
+                  <label className="text-sm text-gray-300 font-semibold flex items-center gap-2 mb-2">
+                    <FaPaperclip /> Supporting Documents
+                  </label>
+                  <p className="text-xs text-gray-400 mb-2">Attach signed consent forms, court orders, DoLS authorizations, or legal correspondence.</p>
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,image/*"
+                    onChange={e => setAttachments(Array.from(e.target.files))}
+                    className="w-full bg-gray-700 text-white rounded p-2 text-sm"
+                  />
+                  {attachments.length > 0 && <p className="text-xs text-green-400 mt-1">{attachments.length} file(s) selected</p>}
                 </div>
               </form>
             </div>
@@ -335,7 +357,7 @@ const ResidentProfileConsentForm = ({ clientId }) => {
                 <button onClick={closeView} className="bg-gray-600 px-4 py-1.5 rounded hover:bg-gray-700 text-sm">Close</button>
                 <button onClick={() => window.print()} className="bg-red-600 px-4 py-1.5 rounded hover:bg-red-700 text-sm text-white">Print</button>
                 <button onClick={() => handleDownloadPdf(viewConsent)} className="bg-green-600 px-4 py-1.5 rounded hover:bg-green-700 text-sm text-white">Export PDF</button>
-                <button onClick={() => { handleDelete(viewConsent._id); closeView(); }} className="bg-red-700 px-4 py-1.5 rounded hover:bg-red-800 text-sm text-white">Delete</button>
+                {isAdmin && <button onClick={() => { handleDelete(viewConsent._id); closeView(); }} className="bg-red-700 px-4 py-1.5 rounded hover:bg-red-800 text-sm text-white">Delete</button>}
                 <button onClick={() => { handleEdit(viewConsent); closeView(); }} className="bg-blue-600 px-4 py-1.5 rounded hover:bg-blue-700 text-sm text-white">Edit</button>
               </div>
             </div>
@@ -359,7 +381,7 @@ const ResidentProfileConsentForm = ({ clientId }) => {
                         </div>
                         <div className="flex gap-2">
                             <button onClick={() => { handleView(r); setShowArchived(false); }} className="text-blue-400 hover:text-blue-300">View</button>
-                            <button onClick={() => handleDelete(r._id)} className="text-red-400 hover:text-red-300">Delete</button>
+                            {isAdmin && <button onClick={() => handleDelete(r._id)} className="text-red-400 hover:text-red-300">Delete</button>}
                         </div>
                     </div>
                   ))

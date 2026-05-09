@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MDS System - Mukammal User Guide (Urdu)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Inter:wght@300;400;600;700&display=swap');
+
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --secondary: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --dark: #111827;
+      --light: #f9fafb;
+      --text: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Nastaliq Urdu', serif;
+      line-height: 1.8;
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 40px;
+      background: #f3f4f6;
+      color: var(--text);
+    }
+
+    .page {
+      background: white;
+      padding: 60px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .cover {
+      height: 297mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      color: white;
+      padding: 60px;
+      margin-bottom: 50px;
+      border-radius: 12px;
+    }
+
+    .cover h1 {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .cover p {
+      font-size: 1.8rem;
+      opacity: 0.9;
+    }
+
+    .cover .version {
+      margin-top: 100px;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px 25px;
+      border-radius: 50px;
+    }
+
+    h1 {
+      color: var(--dark);
+      border-bottom: 4px solid var(--primary);
+      padding-bottom: 15px;
+      margin-top: 60px;
+      font-size: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    h2 {
+      color: var(--primary-dark);
+      margin-top: 45px;
+      border-right: 8px solid var(--primary);
+      padding-right: 20px;
+      font-size: 1.8rem;
+    }
+
+    h3 {
+      color: #4b5563;
+      margin-top: 30px;
+      font-size: 1.4rem;
+      background: #f3f4f6;
+      padding: 10px 20px;
+      border-radius: 8px;
+    }
+
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 30px 0;
+      font-size: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 16px;
+      text-align: right;
+    }
+
+    th {
+      background-color: var(--primary);
+      color: white;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+
+    .btn-ref {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: white;
+      margin: 2px;
+      white-space: nowrap;
+    }
+
+    .btn-add { background-color: var(--secondary); }
+    .btn-edit { background-color: var(--warning); }
+    .btn-delete { background-color: var(--danger); }
+    .btn-view { background-color: var(--info); }
+    .btn-save { background-color: var(--primary); }
+    .btn-download { background-color: #6366f1; }
+
+    .alert-box {
+      background: #fffbeb;
+      border-right: 6px solid var(--warning);
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 8px;
+    }
+
+    .success-box {
+      background: #ecfdf5;
+      border-right: 6px solid var(--secondary);
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 8px;
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      background: var(--primary);
+      color: white;
+      padding: 20px 40px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+      border: none;
+      z-index: 1000;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .print-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(79, 70, 229, 0.5);
+    }
+
+    @media print {
+      @page {
+        margin: 0; /* This removes the browser's footer/header lines */
+      }
+      body {
+        background: white;
+        padding: 15mm; /* Simulated page margin */
+        margin: 0;
+        width: 100%;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page {
+        box-shadow: none !important;
+        margin: 0 0 20px 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        page-break-after: auto; /* Let browser handle natural breaks */
+        height: auto !important;
+        min-height: 0 !important;
+      }
+      .cover {
+        page-break-after: always;
+        height: 270mm; /* Slightly less than A4 to be safe */
+      }
+      .feature-card, table, .toc {
+        page-break-inside: avoid; /* Prevent splitting cards/tables across pages */
+      }
+      h1, h2 {
+        page-break-after: avoid; /* Don't leave headings alone at bottom */
+      }
+    }
+
+    .feature-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      background: #fff;
+    }
+
+    .icon-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .icon-list li {
+      padding: 10px 0;
+      border-bottom: 1px dashed #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon-list li:before {
+      content: "⭐";
+    }
+
+    .toc {
+      columns: 2;
+      column-gap: 40px;
+    }
+
+    .toc li {
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button class="print-btn no-print" onclick="window.print()">📥 PDF Download Karein</button>
+
+  <div class="cover">
+    <h1>🏥 MDS Care System</h1>
+    <p>Mukammal User Manual & Guide</p>
+    <div style="margin-top: 50px; font-size: 1.4rem;">Har Module, Har Section aur Har Button ki Tafseel</div>
+    <div class="version">Version 2.0 - April 2026</div>
+  </div>
+
+  <div class="page">
+    <h1>📑 Fihrist (Table of Contents)</h1>
+    <div class="toc">
+      <ol style="font-size: 1.2rem;">
+        <li><strong>System Overview</strong></li>
+        <li><strong>Dashboard Module</strong></li>
+        <li><strong>Resident Profile Management</strong></li>
+        <li><strong>Care Planning</strong></li>
+        <li><strong>Medication (eMAR)</strong></li>
+        <li><strong>Incident Reports</strong></li>
+        <li><strong>Social Activity</strong></li>
+        <li><strong>Template Management</strong></li>
+        <li><strong>HR & Staff Management</strong></li>
+        <li><strong>Training Module</strong></li>
+        <li><strong>Compliance & Audits</strong></li>
+        <li><strong>Analytics & Reporting</strong></li>
+        <li><strong>User Management</strong></li>
+        <li><strong>Document Management</strong></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="page">
+    <h1>🚀 Asaan aur Mukhtasir Guide (Quick Reference)</h1>
+    <p>Yeh guide aapko jaldi samajhne mein madad degi ke system ka kon sa hissa kya kaam karta hai.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Module ka Naam</th>
+          <th>Yeh kya hai? (Asaan Alfaz)</th>
+          <th>Ise kaise istemal karein?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dashboard</strong></td>
+          <td>Aapka main control center.</td>
+          <td>Yahan se alerts aur total numbers dekhein.</td>
+        </tr>
+        <tr>
+          <td><strong>Resident Profile</strong></td>
+          <td>Mareez ki "Digital File".</td>
+          <td>Ise khol kar mareez ki sari details (Allergies, Care plans) dekhein.</td>
+        </tr>
+        <tr>
+          <td><strong>Care Planning</strong></td>
+          <td>Care ki hidayat (Instructions).</td>
+          <td>Yahan likhen ke mareez ka khayal KAISE rakhna hai.</td>
+        </tr>
+        <tr>
+          <td><strong>Medication (eMAR)</strong></td>
+          <td>Dawaiyo ka record.</td>
+          <td>Dawai dete waqt "GIVE" par click karein taake record ho jaye.</td>
+        </tr>
+        <tr>
+          <td><strong>Incident Reports</strong></td>
+          <td>Haadsaat ka record.</td>
+          <td>Agar koi gir jaye ya chot lage to fauri yahan report karein.</td>
+        </tr>
+        <tr>
+          <td><strong>HR / Staff Profile</strong></td>
+          <td>Staff ka record.</td>
+          <td>Yahan staff ke contracts, DBS aur training check karein.</td>
+        </tr>
+        <tr>
+          <td><strong>Training</strong></td>
+          <td>Seekhne ka record.</td>
+          <td>Surkh (Red) nishaan ka matlab hai ke training dobara karni hai.</td>
+        </tr>
+        <tr>
+          <td><strong>Compliance</strong></td>
+          <td>Safety checks.</td>
+          <td>Rozana ke fire alarm ya pani ke temperature checks yahan likhen.</td>
+        </tr>
+        <tr>
+          <td><strong>Social Activity</strong></td>
+          <td>Fun activities aur visits.</td>
+          <td>Family ki mulaqat ya khel kood ka record yahan rakhen.</td>
+        </tr>
+        <tr>
+          <td><strong>Assessments</strong></td>
+          <td>Khaas check-ups.</td>
+          <td>Khaas zaroryat (jise Nutrition ya Skin care) ke liye forms yahan bharain.</td>
+        </tr>
+        <tr>
+          <td><strong>Analytics</strong></td>
+          <td>Reports aur Graphs.</td>
+          <td>Check karein ke poore maheenay ya saal mein system kaisa raha.</td>
+        </tr>
+        <tr>
+          <td><strong>User Management</strong></td>
+          <td>System ki permissions.</td>
+          <td>Naye staff ko add karein aur batayein ke wo kya kya dekh sakte hain.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>🏗️ Section 1: System Overview</h1>
+    <p>Yeh System care homes ko mukammal taur par digital banane ke liye design kiya gaya hai. Iska maqsad paper-work ko khatam karke data ko mehfooz aur asaan banana hai.</p>
+    
+    <div class="success-box">
+      <strong>🎯 Maqsad:</strong> Residents ki care quality ko behtar banana aur regulatory standards (CQC wagaira) ko meet karna.
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Description</th>
+          <th>Kaam</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dashboard</strong></td>
+          <td>Pura overview</td>
+          <td>Stats aur Alerts</td>
+        </tr>
+        <tr>
+          <td><strong>Resident Profile</strong></td>
+          <td>Mareezo ka record</td>
+          <td>Care Plans, Medical Details</td>
+        </tr>
+        <tr>
+          <td><strong>eMAR</strong></td>
+          <td>Dawai ka system</td>
+          <td>Stock aur Dosage tracking</td>
+        </tr>
+        <tr>
+          <td><strong>Staff Management</strong></td>
+          <td>Staff ka record</td>
+          <td>Rota aur Training</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>📊 Section 2: Dashboard</h1>
+    <p>Dashboard aapki main screen hai jahan se aap poore system par nazar rakh sakte hain.</p>
+    
+    <h3>Dashboard ke Buttons aur Elements:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Element / Button</th>
+          <th>Tafseel (Description)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Search Bar 🔍</strong></td>
+          <td>Kisi bhi Resident ya Staff ko dhoondne ke liye</td>
+          <td>Naam type karein</td>
+        </tr>
+        <tr>
+          <td><strong>Alert Bell 🔔</strong></td>
+          <td>Important notifications (Stock low, reviews overdue)</td>
+          <td>Click karke details dekhein</td>
+        </tr>
+        <tr>
+          <td><strong>Stats Cards 📈</strong></td>
+          <td>Total Residents, Occupancy rate, Staff on duty</td>
+          <td>View Stats</td>
+        </tr>
+        <tr>
+          <td><strong>Quick Links ⚡</strong></td>
+          <td>Add Resident, Report Incident, View Rota shortcuts</td>
+          <td>Fauri access</td>
+        </tr>
+        <tr>
+          <td><strong>Occupancy Chart 📊</strong></td>
+          <td>Room occupancy ka visual graph</td>
+          <td>Monitor rooms</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>👥 Section 3: Resident Profile (Mukammal Tafseel)</h1>
+    <p>Resident Profile kisi bhi mareez ki sari maloomat ka markaz hai. Ise mukhtalif tabs mein taqseem kiya gaya hai:</p>
+
+    <div class="feature-card">
+      <h3>1. About Me (Mere Baare Mein)</h3>
+      <p>Yeh bunyadi maloomat ka page hai. Isme shamil hai:</p>
+      <ul class="icon-list">
+        <li><strong>Zati Tafseel:</strong> Pura naam, DOB, NHS number, aur NI number.</li>
+        <li><strong>Medical Profile:</strong> Bemari ki tashkhees (Diagnosis), diagnosis ki tareekh, aur allergies ki list.</li>
+        <li><strong>Rabta (Contacts):</strong> Next of Kin (NOK), GP, aur specialists ki mukammal tafseel.</li>
+        <li><strong>Pasand o Na-pasand:</strong> "Important To Me", "Please DO", aur "Please DON'T" ki lists taake care ko zati zaroryat ke mutabiq banaya ja sake.</li>
+      </ul>
+      <p><strong>Buttons:</strong> <span class="btn-ref btn-edit">Edit</span> maloomat badalne ke liye, <span class="btn-ref btn-save">Save</span> tabdeeli ko mehfooz karne ke liye.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>2. Care Plans (Care Planning)</h3>
+      <p>Care delivery ke mansoobon ka intezam.</p>
+      <ul class="icon-list">
+        <li>Isme Communication, Mobility, Dietary, aur Personal Care ki zaroryat shamil hain.</li>
+        <li>Review dates track ki jati hain taake plans purane na hon.</li>
+      </ul>
+      <p><strong>Buttons:</strong> <span class="btn-ref btn-add">+ Add Care Plan</span>, <span class="btn-ref btn-view">View History</span>.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>3. Medication (eMAR - Dawaiyan)</h3>
+      <p>Dawaiyo ka digital record.</p>
+      <ul class="icon-list">
+        <li><strong>Active Orders:</strong> Dekhein ke kon si dawaiyan di ja rahi hain.</li>
+        <li><strong>Admin Log:</strong> Har us dose ki history jo di gayi, reh gayi ya mana kar di gayi, staff ke naam ke sath.</li>
+      </ul>
+      <p><strong>Buttons:</strong> <span class="btn-ref btn-save">GIVE</span> (Dawai di gayi), <span class="btn-ref btn-delete">REFUSE</span> (Mana kar diya). </p>
+    </div>
+
+    <div class="feature-card">
+      <h3>4. Daily Logs aur Handovers</h3>
+      <p>Resident ki rozana ki zindagi ka record.</p>
+      <ul class="icon-list">
+        <li><strong>Daily Logs:</strong> Staff resident ka mood, sehat ke indicators (HR, Bristol score), aur notes record karte hain.</li>
+        <li><strong>Handovers:</strong> Aik shift se doosri shift ko di jane wali summary notes taake care musalsal rahe.</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>5. PBS, Risk aur Goals</h3>
+      <p>Clinical aur behavioral management.</p>
+      <ul class="icon-list">
+        <li><strong>PBS Plans:</strong> Positive Behaviour Support ki strategies.</li>
+        <li><strong>Risk Assessments:</strong> Girne ya chot lagne jaise khatraat ko pehchanna aur unhe kam karna.</li>
+        <li><strong>Goals:</strong> Resident ki taraqqi ke liye maqasid set karna aur unhe track karna.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page">
+    <h1>👔 Section 9: Staff Profile (Mukammal Tafseel)</h1>
+    <p>Staff Profile har mulazim ke HR data ka intezam karti hai:</p>
+
+    <div class="feature-card">
+      <h3>1. Personal & Employment (Zati aur Mulazmat)</h3>
+      <p>Bunyadi HR data jisme rabta, pata, ohda (position), aur contract ki type shamil hai.</p>
+      <ul class="icon-list">
+        <li><strong>Compliance:</strong> DBS status, Right to Work, aur Visa expiry track karta hai.</li>
+        <li><strong>Next of Kin:</strong> Emergency rabte ki tafseel.</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>2. Scheduling & Rota (Shifts ka Intezam)</h3>
+      <p>Aik interactive calendar jo mulazim ki assigned shifts dikhata hai.</p>
+      <p><strong>Action:</strong> Calendar ke zariye aane wali shifts dekhein ya purani attendance check karein.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>3. Training & Performance (Training aur Karkardagi)</h3>
+      <p>Staff ki qabiliyat aur karkardagi ko yaqeeni banana.</p>
+      <ul class="icon-list">
+        <li><strong>Training:</strong> Mukammal aur pending training modules ki list certificates ke sath.</li>
+        <li><strong>Performance:</strong> Holiday allowance, Appraisals, aur Supervisions ka record.</li>
+      </ul>
+      <p><strong>Rangon ka Maatlab:</strong> <span style="color:green">Sabz (Mukammal)</span>, <span style="color:orange">Peela (Khatam hone wali)</span>, <span style="color:red">Surkh (Khatam ho chuki)</span>.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>4. Pay aur Documents</h3>
+      <p>Admin aur maliyati (financial) data.</p>
+      <ul class="icon-list">
+        <li><strong>Pay:</strong> Bank account details aur payroll ke liye tax codes.</li>
+        <li><strong>Documents:</strong> Contracts, ID, aur disciplinary records ke liye aik mehfooz folder.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page">
+    <h1>📝 Section 4: Care Planning</h1>
+    <p>Care plans residents ki zaroryat ko madde nazar rakh kar banaye jate hain.</p>
+    
+    <h3>Buttons aur Functionality:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Button</th>
+          <th>Tafseel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="btn-ref btn-add">+ Add Care Plan</span></td>
+          <td>Naya care plan banayein</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-edit">Update Plan</span></td>
+          <td>Mojooda plan ko tabdeel karein</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-download">Download PDF</span></td>
+          <td>Care plan ko PDF mein print karein</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-view">View History</span></td>
+          <td>Purane plans aur changes dekhein</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>💊 Section 5: Medication (eMAR)</h1>
+    <p>Electronic Medication Administration Record (eMAR) dawaiyo ke intezam ke liye hai.</p>
+
+    <div class="feature-card">
+      <h3>Medication Management Buttons:</h3>
+      <ul class="icon-list">
+        <li><strong>GIVE:</strong> Dawai de di gayi (Stock automatically kam ho jayega).</li>
+        <li><strong>REFUSE:</strong> Mareez ne dawai lene se inkar kiya (Reason dena lazmi hai).</li>
+        <li><strong>PRN:</strong> Zarorat ke waqt di jane wali dawai (Reason record karein).</li>
+        <li><strong>Stock Alert:</strong> Agar dawai khatam hone wali ho to red alert dikhayega.</li>
+      </ul>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Button</th>
+          <th>Rang (Color)</th>
+          <th>Kaam</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>GIVE</strong></td>
+          <td>Sabz (Green)</td>
+          <td>Dawai de di gayi</td>
+        </tr>
+        <tr>
+          <td><strong>REFUSE</strong></td>
+          <td>Surkh (Red)</td>
+          <td>Mana kar diya gaya</td>
+        </tr>
+        <tr>
+          <td><strong>Add Medication</strong></td>
+          <td>Neela (Blue)</td>
+          <td>Nayi dawai add karein</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>📋 Section 6: Incident Reports</h1>
+    <p>Incidents (haadsaat) ko fauri taur par record karna zaroori hai.</p>
+
+    <h3>Kaise Report Karein?</h3>
+    <ol>
+      <li><strong>+ New Incident</strong> button par click karein.</li>
+      <li>Incident ki type select karein (Fall, Injury, Medication Error).</li>
+      <li>Detail likhen, witnesses add karein aur agar zaroori ho to photos upload karein.</li>
+      <li>Submit karein, Manager ko fauri notification chala jayega.</li>
+    </ol>
+
+    <h3>Buttons:</h3>
+    <ul>
+      <li><span class="btn-ref btn-add">New Incident</span> - Naya report</li>
+      <li><span class="btn-ref btn-view">View Details</span> - Mukammal tafseel</li>
+      <li><span class="btn-ref btn-download">Export PDF</span> - Print out ke liye</li>
+      <li><span class="btn-ref btn-edit">Follow-up</span> - Baad ke actions record karein</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>🎨 Section 7: Social Activity</h1>
+    <p>Residents ki social life aur engagement ko track karne ke liye.</p>
+    
+    <h3>Categories:</h3>
+    <ul>
+      <li>Family Visits</li>
+      <li>Hobbies (Mushghalay)</li>
+      <li>Games (Khel)</li>
+      <li>Social Engagement</li>
+    </ul>
+
+    <h3>Buttons aur Actions:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Button</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="btn-ref btn-add">Add Activity</span></td>
+          <td>Nayi activity record karein</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-view">View Attachments</span></td>
+          <td>Photos aur videos dekhein</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-download">Download CSV</span></td>
+          <td>Excel file mein record nikalein</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-download">Download PDF</span></td>
+          <td>PDF report download karein</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>📄 Section 8: Template Management</h1>
+    <p>Standard forms aur templates ko manage karne ke liye.</p>
+
+    <h3>Buttons:</h3>
+    <ul class="icon-list">
+      <li><span class="btn-ref btn-add">Add Record:</span> Naya template upload karein.</li>
+      <li><span class="btn-ref btn-view">View Template:</span> Document ko open karke dekhein.</li>
+      <li><span class="btn-ref btn-edit">Edit:</span> Title ya visibility tabdeel karein.</li>
+      <li><span class="btn-ref btn-delete">Delete:</span> Purana template khatam karein.</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>🎓 Section 10: Training Module</h1>
+    <p>Staff ki training aur unki expiry track karein.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Indicator</th>
+          <th>Maatlab</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Up to Date</strong></td>
+          <td>Sabz (Green) ✅</td>
+          <td>Training mukammal hai</td>
+        </tr>
+        <tr>
+          <td><strong>Expiring Soon</strong></td>
+          <td>Peela (Yellow) ⚠️</td>
+          <td>30 din mein khatam hone wali hai</td>
+        </tr>
+        <tr>
+          <td><strong>Expired</strong></td>
+          <td>Surkh (Red) ❌</td>
+          <td>Training khatam ho chuki hai</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Buttons:</strong> <span class="btn-ref btn-add">Add Training</span> <span class="btn-ref btn-save">Mark Complete</span> <span class="btn-ref btn-add">Upload Certificate</span></p>
+  </div>
+
+  <div class="page">
+    <h1>✅ Section 11: Compliance & Audits</h1>
+    <p>Regulatory compliance aur checks ka record.</p>
+
+    <h3>Daily/Weekly Checks:</h3>
+    <ul>
+      <li>Fire Alarm Tests</li>
+      <li>Water Temperatures</li>
+      <li>Fridge Temperatures</li>
+      <li>Emergency Lighting</li>
+    </ul>
+
+    <h3>Buttons:</h3>
+    <ul>
+      <li><span class="btn-ref btn-add">Add Check</span> - Naya check record karein.</li>
+      <li><span class="btn-ref btn-save">Mark Complete</span> - Check mukammal mark karein.</li>
+      <li><span class="btn-ref btn-add">Upload Evidence</span> - Photo ya certificate attach karein.</li>
+      <li><span class="btn-ref btn-download">Export Report</span> - Audit report download karein.</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>📈 Section 12: Analytics & Reporting</h1>
+    <p>Poore care home ki reports aur audit logs.</p>
+
+    <h3>Tabs:</h3>
+    <ol>
+      <li><strong>Analytics:</strong> Performance overview charts.</li>
+      <li><strong>Compliance Logs:</strong> Compliance ki history.</li>
+      <li><strong>Care Plan Logs:</strong> Changes ki history.</li>
+      <li><strong>Medication Logs:</strong> Dawaiyo ki history.</li>
+    </ol>
+
+    <h3>Buttons:</h3>
+    <ul class="icon-list">
+      <li><span class="btn-ref btn-download">Export PDF / CSV:</span> Mukammal report download karein.</li>
+      <li><span class="btn-ref btn-delete">Delete Log:</span> Purana record khatam karein (sirf Admin).</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>🔐 Section 13: User Management (Roles & Permissions)</h1>
+    <p>Yeh section Administrator ko ijazat deta hai ke wo faisla kare ke system kon istemal karega aur wo kya dekh ya badal sakta hai.</p>
+
+    <div class="feature-card">
+      <h3>1. Administrator (Admin)</h3>
+      <p><strong>Role:</strong> Full System Controller.</p>
+      <ul class="icon-list">
+        <li><strong>Mukammal Ikhtiyar:</strong> Har module ko dekh aur badal sakta hai.</li>
+        <li><strong>User Control:</strong> Sirf Admin hi naye users bana sakta hai ya purano ko nikal sakta hai.</li>
+        <li><strong>Security:</strong> Passwords badalna aur system settings ko control karna.</li>
+        <li><strong>Deletion:</strong> Sirf Admin ke paas zaroori record (Residents, Staff, Incidents) delete karne ki taqat hai.</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>2. Staff Member (Mulazim)</h3>
+      <p><strong>Role:</strong> Rozana ki Care dene wala.</p>
+      <ul class="icon-list">
+        <li><strong>Kaam ka Ikhtiyar:</strong> Daily Logs add karna, Care Plans update karna, aur Medication record karna.</li>
+        <li><strong>Delete ki ijazat nahi:</strong> Wo profiles ya main records delete nahi kar sakta.</li>
+        <li><strong>Limited HR:</strong> Wo apni profile dekh sakta hai lekin doosre staff ki private details (jise bank account) nahi dekh sakta.</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>3. External User (Auditor / Family)</h3>
+      <p><strong>Role:</strong> Guest Viewer (Sirf dekhne wala).</p>
+      <ul class="icon-list">
+        <li><strong>Mehdood Ikhtiyar:</strong> Sirf wahi pages dekh sakta hai jiski Admin ne ijazat di ho.</li>
+        <li><strong>Sirf Dekhna:</strong> Wo kuch bhi add, edit ya delete nahi kar sakta.</li>
+        <li><strong>Audit:</strong> Yeh inspectors (jise CQC) ya ghar walon ke liye behtareen hai jo sirf progress check karna chahte hain.</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>4. Client (Resident)</h3>
+      <p><strong>Role:</strong> Apni report dekhna.</p>
+      <ul class="icon-list">
+        <li><strong>Zati View:</strong> Agar ijazat ho, to resident apna care plan aur apni taraqqi dekh sakta hai.</li>
+        <li><strong>Privacy:</strong> Wo kisi doosre resident ya staff ki maloomat nahi dekh sakta.</li>
+      </ul>
+    </div>
+
+    <p><strong>Buttons:</strong> <span class="btn-ref btn-add">Add User</span>, <span class="btn-ref btn-edit">Manage Permissions</span>, <span class="btn-ref btn-delete">Remove Access</span>.</p>
+  </div>
+
+  <div class="page">
+    <h1>📂 Section 14: Document Management</h1>
+    <p>Sare documents ka markazi repository.</p>
+
+    <h3>Buttons:</h3>
+    <ul>
+      <li><span class="btn-ref btn-add">Upload File:</span> Nayi file upload karein.</li>
+      <li><span class="btn-ref btn-view">Preview:</span> File ko dekhein.</li>
+      <li><span class="btn-ref btn-download">Download:</span> File apne computer mein save karein.</li>
+      <li><span class="btn-ref btn-edit">Move/Rename:</span> Folder tabdeel karein ya naam badlein.</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>🛠️ Modules ka Mukammal Tariqa-e-Kar (Workflow)</h1>
+    <p>Is section mein bataya gaya hai ke system ke ahem hisson mein kaam kaise hota hai.</p>
+
+    <div class="feature-card">
+      <h3>1. Resident ka Record Kaise Manage Karein?</h3>
+      <p><strong>Step 1:</strong> Sab se pehle <strong>Resident Management</strong> mein naya resident add karein.</p>
+      <p><strong>Step 2:</strong> Unki profile mein ja kar <strong>About Me</strong> bharain (Allergies likhna bohot zaroori hai!).</p>
+      <p><strong>Step 3:</strong> <strong>Care Plan</strong> banayein taake staff ko pata ho ke kya karna hai.</p>
+      <p><strong>Step 4:</strong> <strong>Assessments</strong> (Nutrition, Skin, Risk) karein taake khatraat ka pata chale.</p>
+      <p><strong>Step 5:</strong> Staff rozana <strong>Daily Logs</strong> bharegi taake care ka saboot rahe.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>2. Dawai Dene ka Tariqa (eMAR)</h3>
+      <p><strong>Setup:</strong> Pehle resident ki profile mein dawai add karein.</p>
+      <p><strong>Amal:</strong> Dawai ke waqt <strong>Medication Management</strong> mein jayein aur <strong>GIVE</strong> par click karein.</p>
+      <p><strong>Safety:</strong> Agar dawai nahi de sakte, to <strong>REFUSE</strong> par click karein aur wajah (reason) likhen.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>3. Incident Report Kaise Karein?</h3>
+      <p><strong>Fauri Amal:</strong> Jaise hi koi haadsa ho, <strong>Incident Reports</strong> kholain.</p>
+      <p><strong>Entry:</strong> Incident ki type select karein aur batayein ke kya hua, aur agar ho sake to photo upload karein.</p>
+      <p><strong>Review:</strong> Manager report check karke <strong>Follow-up</strong> likhega taake aisa dobara na ho.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>4. Audits aur Compliance</h3>
+      <p><strong>Rozana ka Kaam:</strong> <strong>Compliance</strong> module mein fire safety, pani ka temperature aur cleaning checks record karein.</p>
+      <p><strong>Saboot:</strong> Signed sheets ya readings ki photo upload karein taake inspectors ko dikhaya ja sake.</p>
+    </div>
+  </div>
+
+  <div class="page">
+    <div style="text-align: center; margin-top: 100px;">
+      <h2 style="border: none;">End of Guide</h2>
+      <p>Agar aapko mazeed madad chahiye to system administrator se rabta karein.</p>
+      <p style="opacity: 0.5;">© 2026 MDS Care System - All Rights Reserved</p>
+    </div>
+  </div>
+
+</body>
+
+</html>

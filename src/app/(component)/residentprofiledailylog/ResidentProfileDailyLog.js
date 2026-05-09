@@ -8,16 +8,21 @@ import {
   FaEye,
   FaTimes,
   FaArchive,
+  FaPaperclip,
 } from "react-icons/fa";
 import { IoBookOutline } from "react-icons/io5";
+import { useAuth } from "@/app/context/AuthContext";
 
 const ResidentProfileDailyLog = ({ clientId }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Admin";
   const [logs, setLogs] = useState([]);
   const [archivedLogs, setArchivedLogs] = useState([]);
   const [showLogForm, setShowLogForm] = useState(false);
   const [editingLogId, setEditingLogId] = useState(null);
   const [viewLog, setViewLog] = useState(null);
   const [showArchived, setShowArchived] = useState(false);
+  const [attachments, setAttachments] = useState([]);
 
   const [logForm, setLogForm] = useState({
     dateTime: "",
@@ -65,6 +70,7 @@ const ResidentProfileDailyLog = ({ clientId }) => {
   const resetLogForm = () => {
     setEditingLogId(null);
     setLogForm({ dateTime: "", staffName: "", notes: "", moodEmoji: "", bristolScore: "", heartRate: "", healthQuick: "" });
+    setAttachments([]);
     setShowLogForm(false);
   };
 
@@ -265,7 +271,7 @@ const ResidentProfileDailyLog = ({ clientId }) => {
                         <div className="flex space-x-3 text-white text-sm relative">
                            <button onClick={() => handleView(log)} className="hover:text-blue-500 cursor-pointer" title="View"><FaEye /></button>
                            <button onClick={() => handleEdit(log)} className="hover:text-yellow-400 cursor-pointer" title="Edit"><FaEdit /></button>
-                           <button onClick={() => handleDelete(log._id)} className="hover:text-red-500 cursor-pointer" title="Delete"><FaTrash /></button>
+                           {isAdmin && <button onClick={() => handleDelete(log._id)} className="hover:text-red-500 cursor-pointer" title="Delete (Admin only)"><FaTrash /></button>}
                         </div>
                       </td>
                     </tr>
@@ -331,6 +337,22 @@ const ResidentProfileDailyLog = ({ clientId }) => {
                 <div className="flex justify-between pt-4">
                   <button type="button" onClick={resetLogForm} className="bg-gray-600 px-4 py-2 rounded text-white">Cancel</button>
                   <button type="submit" className="bg-indigo-600 px-4 py-2 rounded text-white">{editingLogId ? "Update Log" : "Save Log"}</button>
+                </div>
+
+                {/* ─── Supporting Documents ─── */}
+                <div className="border-t border-gray-600 pt-4">
+                  <label className="text-sm text-gray-300 font-semibold flex items-center gap-2 mb-2">
+                    <FaPaperclip /> Supporting Documents
+                  </label>
+                  <p className="text-xs text-gray-400 mb-2">Attach scans, body maps, observation sheets, or external forms.</p>
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,image/*"
+                    onChange={e => setAttachments(Array.from(e.target.files))}
+                    className="w-full bg-gray-700 text-white rounded p-2 text-sm"
+                  />
+                  {attachments.length > 0 && <p className="text-xs text-green-400 mt-1">{attachments.length} file(s) selected</p>}
                 </div>
               </form>
             </div>
@@ -428,6 +450,7 @@ const ResidentProfileDailyLog = ({ clientId }) => {
                 <button
                   onClick={() => { handleDelete(viewLog._id); closeView(); }}
                   className="bg-red-700 px-4 py-1.5 rounded hover:bg-red-800 text-sm text-white font-medium"
+                  style={{ display: isAdmin ? undefined : 'none' }}
                 >
                   Delete
                 </button>
@@ -459,7 +482,7 @@ const ResidentProfileDailyLog = ({ clientId }) => {
                         </div>
                         <div className="flex gap-2">
                             <button onClick={() => { handleView(log); setShowArchived(false); }} className="text-blue-400 hover:text-blue-300">View</button>
-                            <button onClick={() => handleDelete(log._id)} className="text-red-400 hover:text-red-300">Delete</button>
+                            {isAdmin && <button onClick={() => handleDelete(log._id)} className="text-red-400 hover:text-red-300">Delete</button>}
                         </div>
                     </div>
                   ))

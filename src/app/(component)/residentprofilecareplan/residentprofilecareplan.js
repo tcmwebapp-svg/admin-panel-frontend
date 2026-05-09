@@ -6,7 +6,8 @@ import Image from "next/image";
 import { FaPlus, FaTrash, FaEye, FaDownload, FaTimes, FaArchive } from "react-icons/fa";
 import { MdOutlineHealthAndSafety } from "react-icons/md";
 import jsPDF from "jspdf";
-import "jspdf-autotable"; // Optional for table format
+import "jspdf-autotable";
+import { useAuth } from "@/app/context/AuthContext";
 const initialFormData = {
   preparedBy: "MDS IT SUPPORT (Current User)",
   currentAbility: "",
@@ -25,6 +26,8 @@ const initialFormData = {
 const ResidentProfileCarePlan = React.forwardRef(({ clientId }, ref) => {
 ResidentProfileCarePlan.displayName = "ResidentProfileCarePlan";
 
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Admin";
   const [showForm, setShowForm] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
   const [plans, setPlans] = useState([]);
@@ -528,9 +531,11 @@ useEffect(() => {
 
   {/* Edit moved to View modal - removed inline edit button */}
 
-  <button onClick={() => handleDelete(item._id)} title="Delete">
-    <FaTrash className="hover:text-red-400" />
-  </button>
+  {isAdmin && (
+    <button onClick={() => handleDelete(item._id)} title="Delete (Admin only)">
+      <FaTrash className="hover:text-red-400" />
+    </button>
+  )}
 </td>
 
       </tr>
@@ -568,7 +573,7 @@ useEffect(() => {
                       </div>
                       <div className="flex gap-2">
                         <button onClick={() => handleView(a)} className="text-blue-400">View</button>
-                        <button onClick={() => handleDelete(a._id)} className="text-red-400">Delete</button>
+                        {isAdmin && <button onClick={() => handleDelete(a._id)} className="text-red-400">Delete</button>}
                       </div>
                     </div>
                     {a.carePlanData && a.carePlanData.preparedBy && (
@@ -623,10 +628,23 @@ useEffect(() => {
               {selectedPlan && (
                 <form onSubmit={handleSubmit} className="space-y-4">
 
-                            {/* Attachments Field */}
-                            
-
-
+                  {/* ─── Attachments Field ─── */}
+                  <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                    <label className="text-sm text-gray-300 font-semibold flex items-center gap-2 mb-2">
+                      <span>📎</span> Supporting Documents & Attachments
+                    </label>
+                    <p className="text-xs text-gray-400 mb-3">Attach PDFs, care plans, scans, images, external referral forms, or any relevant documentation.</p>
+                    <input
+                      type="file"
+                      multiple
+                      accept=".pdf,.doc,.docx,image/*"
+                      onChange={e => setAttachments(Array.from(e.target.files))}
+                      className="w-full bg-gray-800 text-white rounded p-2 text-sm border border-gray-500"
+                    />
+                    {attachments.length > 0 && (
+                      <p className="text-xs text-green-400 mt-2">✓ {attachments.length} file(s) ready to upload</p>
+                    )}
+                  </div>
 {/* Create New Personal Hygiene Care Plan/////////////////////////////////////////////////////////////// */}
                  
                   {/* Specific Fields */}

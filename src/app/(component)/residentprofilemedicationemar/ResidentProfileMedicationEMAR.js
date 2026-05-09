@@ -7,12 +7,14 @@ import {
   FaEdit,
   FaEye,
   FaTimes,
-  FaArchive,
-  FaHistory,
+  FaPaperclip,
 } from "react-icons/fa";
 import { MdOutlineMedication } from "react-icons/md";
 import axios from "axios";
+import { useAuth } from "@/app/context/AuthContext";
 const ResidentProfileMedicationEMAR = ({ clientId }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Admin";
   const [activeTab, setActiveTab] = useState("active"); // 'active' | 'history'
   const [medications, setMedications] = useState([]); // From /medications
   const [adminHistory, setAdminHistory] = useState([]); // From /medication-administration
@@ -27,11 +29,12 @@ const ResidentProfileMedicationEMAR = ({ clientId }) => {
   // Form State for Medication Order
   const [medForm, setMedForm] = useState({
     medicationName: "",
-    frequency: "", 
+    frequency: "",
     times: "", // comma separated
     stock: { quantity: 0, threshold: 5 },
     status: "Pending",
   });
+  const [medFiles, setMedFiles] = useState([]);
 
   // Form State for Administration
   const [adminForm, setAdminForm] = useState({
@@ -92,34 +95,42 @@ const ResidentProfileMedicationEMAR = ({ clientId }) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     try {
-        // Construct payload to match Medication-Management/page.js structure
-        const timesArray = medForm.times.split(",").map(t => t.trim()).filter(Boolean);
+      const timesArray = medForm.times.split(",").map(t => t.trim()).filter(Boolean);
 
-        const payload = {
-            client: clientId,
-            medicationName: medForm.medicationName,
-            caregiverName: "Staff", 
-            schedule: { 
-                frequency: medForm.frequency, 
-                times: timesArray 
-            },
-            stock: medForm.stock,
-            status: medForm.status || "Pending"
-        };
+      // Use FormData so attachments can be included
+      const fd = new FormData();
+      fd.append("client", clientId);
+      fd.append("medicationName", medForm.medicationName);
+      fd.append("caregiverName", user?.name || "Staff");
+      fd.append("schedule[frequency]", medForm.frequency);
+      timesArray.forEach(t => fd.append("schedule[times][]", t));
+      fd.append("stock[quantity]", medForm.stock.quantity);
+      fd.append("stock[threshold]", medForm.stock.threshold);
+      fd.append("status", medForm.status || "Pending");
+      medFiles.forEach(f => fd.append("attachments", f));
 
-        if(editingId) {
-            await axios.put(`https://admin-panel-backend-alpha.vercel.app/medications/${editingId}`, payload, { headers: { Authorization: `Bearer ${token}` } });
-            alert("Medication updated!");
-        } else {
-            await axios.post(`https://admin-panel-backend-alpha.vercel.app/medications`, payload, { headers: { Authorization: `Bearer ${token}` } });
-            alert("Medication added!");
-        }
-        setShowForm(false);
-        setEditingId(null);
-        fetchData();
-    } catch(err) {
-        console.error(err);
-        alert("Failed to save medication");
+      if (editingId) {
+        await axios.put(
+          `https://admin-panel-backend-alpha.vercel.app/medications/${editingId}`,
+          fd,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        alert("Medication updated!");
+      } else {
+        await axios.post(
+          `https://admin-panel-backend-alpha.vercel.app/medications`,
+          fd,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        alert("Medication added!");
+      }
+      setShowForm(false);
+      setEditingId(null);
+      setMedFiles([]);
+      fetchData();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save medication: " + (err.response?.data?.error || err.message));
     }
   };
 
@@ -316,7 +327,7 @@ const ResidentProfileMedicationEMAR = ({ clientId }) => {
                                         <td className="px-4 py-3 flex gap-2">
                                             <button onClick={() => openAdminForm(m)} className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs" title="Record Dose">Record Dose</button>
                                             <button onClick={() => handleEditMed(m)} className="text-yellow-400 hover:text-yellow-300"><FaEdit /></button>
-                                            <button onClick={() => handleDeleteMedication(m._id)} className="text-red-400 hover:text-red-300"><FaTrash /></button>
+                                            {isAdmin && <button onClick={() => handleDeleteMedication(m._id)} className="text-red-400 hover:text-red-300" title="Delete (Admin only)"><FaTrash /></button>}
                                             <button onClick={() => handleView(m, 'order')} className="text-blue-400 hover:text-blue-300" title="View Details"><FaEye /></button>
                                         </td>
                                     </tr>
@@ -385,7 +396,7 @@ const ResidentProfileMedicationEMAR = ({ clientId }) => {
                                         </td>
                                         <td className="px-4 py-3 text-white">{h.caregiverName}</td>
                                         <td className="px-4 py-3 flex gap-2">
-                                            <button onClick={() => handleDeleteHistory(h._id)} className="text-red-400 hover:text-red-300"><FaTrash /></button>
+                                            {isAdmin && <button onClick={() => handleDeleteHistory(h._id)} className="text-red-400 hover:text-red-300" title="Delete (Admin only)"><FaTrash /></button>}
                                             <button onClick={() => handleView(h, 'history')} className="text-blue-400 hover:text-blue-300" title="View Details"><FaEye /></button>
                                         </td>
                                     </tr>
@@ -586,48 +597,26 @@ const ResidentProfileMedicationEMAR = ({ clientId }) => {
 
                 {viewType === 'order' && (
                     <>
-                        <button
-                        onClick={() => {
-                            handleDeleteMedication(viewItem._id);
-                            closeView();
-                        }}
-                        className="bg-red-600 px-4 py-2 rounded hover:bg-red-700 text-sm"
-                        >
-                        Delete Order
-                        </button>
-
-                        <button
-                        onClick={() => {
-                            handleEditMed(viewItem);
-                            closeView();
-                        }}
-                        className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 text-sm"
-                        >
-                        Edit Order
+                        {isAdmin && (
+                          <button onClick={() => { handleDeleteMedication(viewItem._id); closeView(); }} className="bg-red-600 px-4 py-2 rounded hover:bg-red-700 text-sm">
+                            Delete Order
+                          </button>
+                        )}
+                        <button onClick={() => { handleEditMed(viewItem); closeView(); }} className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 text-sm">
+                          Edit Order
                         </button>
                     </>
                 )}
 
                 {viewType === 'history' && (
                     <>
-                        <button
-                        onClick={() => {
-                            handleDeleteHistory(viewItem._id);
-                            closeView();
-                        }}
-                        className="bg-red-600 px-4 py-2 rounded hover:bg-red-700 text-sm"
-                        >
-                        Delete Record
-                        </button>
-
-                        <button
-                        onClick={() => {
-                            handleEditAdmin(viewItem);
-                            closeView();
-                        }}
-                        className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 text-sm"
-                        >
-                        Edit Record
+                        {isAdmin && (
+                          <button onClick={() => { handleDeleteHistory(viewItem._id); closeView(); }} className="bg-red-600 px-4 py-2 rounded hover:bg-red-700 text-sm">
+                            Delete Record
+                          </button>
+                        )}
+                        <button onClick={() => { handleEditAdmin(viewItem); closeView(); }} className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 text-sm">
+                          Edit Record
                         </button>
                     </>
                 )}

@@ -1327,27 +1327,30 @@ transition-all duration-300 gap-6"
 
 
 
-   <button
-  className="bg-[#2A2A40] hover:bg-[#3A3A55] cursor-pointer text-white px-2 py-1 rounded-md flex items-center space-x-2 border border-[#4A49B0]/40"
-  onClick={async () => {
-    if (!confirm("Are you sure you want to delete this resident profile? This action will permanently remove all associated records and cannot be undone.")) return;
+   {user?.role === "Admin" && (
+  <button
+    className="bg-[#2A2A40] hover:bg-[#3A3A55] cursor-pointer text-white px-2 py-1 rounded-md flex items-center space-x-2 border border-red-700/60"
+    title="Admin Only: Permanently delete resident"
+    onClick={async () => {
+      if (!confirm("ADMIN ACTION: Are you sure you want to permanently delete this resident profile? This action will remove all associated records and cannot be undone.")) return;
 
-    const res = await fetch(`https://admin-panel-backend-alpha.vercel.app/client/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+      const res = await fetch(`https://admin-panel-backend-alpha.vercel.app/client/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-    const data = await res.json();
-    alert(data.message);
+      const data = await res.json();
+      alert(data.message);
 
-    router.push("/Client-Management"); // redirect back
-  }}
->
-  <FaTrashAlt className="text-[#4A49B0]" />
-  <span>Terminate</span>
-</button>
+      router.push("/Client-Management");
+    }}
+  >
+    <FaTrashAlt className="text-red-400" />
+    <span>Terminate</span>
+  </button>
+)}
 
   </div>
 </div>

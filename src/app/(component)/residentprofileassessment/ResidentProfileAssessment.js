@@ -1,11 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { FaPlus, FaTimes, FaEye, FaTrash, FaClipboardCheck, FaChevronDown, FaChevronUp, FaSave, FaFilePdf } from "react-icons/fa";
+import { FaPlus, FaTimes, FaEye, FaTrash, FaClipboardCheck, FaChevronDown, FaChevronUp, FaSave, FaFilePdf, FaPaperclip } from "react-icons/fa";
 import { ASSESSMENT_TYPES, TEMPLATE_FIELDS } from "./assessmentTemplates";
+import { useAuth } from "@/app/context/AuthContext";
 
 const API = "https://admin-panel-backend-alpha.vercel.app";
 
 const ResidentProfileAssessment = ({ clientId }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Admin";
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -17,6 +20,7 @@ const ResidentProfileAssessment = ({ clientId }) => {
   const [staffMembers, setStaffMembers] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState("");
   const [clientData, setClientData] = useState(null);
+  const [assessmentFiles, setAssessmentFiles] = useState([]);
 
   // Dynamic data for special fields
   const [goals, setGoals] = useState([{ goal: "", timeframe: "", progress: "" }]);
@@ -1276,6 +1280,22 @@ const ResidentProfileAssessment = ({ clientId }) => {
               {TEMPLATE_FIELDS[selectedType].hasVisits && renderVisits()}
               {TEMPLATE_FIELDS[selectedType].hasChecklist && renderChecklist()}
 
+              {/* ─── Supporting Documents ─── */}
+              <div className="bg-[#1a2636] p-4 rounded-lg border border-gray-700 mb-4">
+                <label className="text-sm text-gray-300 font-semibold flex items-center gap-2 mb-2">
+                  <FaPaperclip /> Supporting Documents & Evidence
+                </label>
+                <p className="text-xs text-gray-400 mb-2">Attach scan results, external reports, body maps, referral letters, or any supporting documentation.</p>
+                <input
+                  type="file"
+                  multiple
+                  accept=".pdf,.doc,.docx,image/*"
+                  onChange={e => setAssessmentFiles(Array.from(e.target.files))}
+                  className="w-full bg-[#2d3b4e] border border-gray-600 text-white rounded p-2 text-sm"
+                />
+                {assessmentFiles.length > 0 && <p className="text-xs text-green-400 mt-1">{assessmentFiles.length} file(s) ready to attach</p>}
+              </div>
+
               <button onClick={handleSubmit} disabled={saving}
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white px-6 py-2 rounded-lg font-bold transition">
                 {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <FaSave />}
@@ -1317,10 +1337,12 @@ const ResidentProfileAssessment = ({ clientId }) => {
                     className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm transition">
                     <FaEye /> View
                   </button>
-                  <button onClick={() => handleDelete(a._id)}
-                    className="flex items-center gap-1 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white px-3 py-1.5 rounded text-sm transition">
-                    <FaTrash /> Delete
-                  </button>
+                  {isAdmin && (
+                    <button onClick={() => handleDelete(a._id)}
+                      className="flex items-center gap-1 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white px-3 py-1.5 rounded text-sm transition">
+                      <FaTrash /> Delete
+                    </button>
+                  )}
                 </div>
               </div>
             ))

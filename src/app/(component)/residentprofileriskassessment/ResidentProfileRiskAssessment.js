@@ -8,16 +8,22 @@ import {
   FaEye,
   FaTimes,
   FaArchive,
+  FaPaperclip,
+  FaDownload,
 } from "react-icons/fa";
 import { IoWarningOutline } from "react-icons/io5";
+import { useAuth } from "@/app/context/AuthContext";
 
 const ResidentProfileRiskAssessment = ({ clientId }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Admin";
   const [showRiskForm, setShowRiskForm] = useState(false);
   const [plans, setPlans] = useState([]);
   const [archivedPlans, setArchivedPlans] = useState([]);
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [viewPlan, setViewPlan] = useState(null);
   const [showArchived, setShowArchived] = useState(false);
+  const [attachments, setAttachments] = useState([]);
 
   const [riskForm, setRiskForm] = useState({
     riskTitle: "",
@@ -84,6 +90,7 @@ const ResidentProfileRiskAssessment = ({ clientId }) => {
       clinicalSummary: "",
     });
     setEditingPlanId(null);
+    setAttachments([]);
     setShowRiskForm(false);
   };
 
@@ -125,54 +132,59 @@ const ResidentProfileRiskAssessment = ({ clientId }) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    const payload = {
-      clientId,
-      planTitle: riskForm.riskTitle,
-      dateOfAssessment: riskForm.dateOfAssessment,
-      assessedBy: riskForm.assessedBy,
-      overallRiskLevel: riskForm.overallRiskLevel,
-      categories: riskForm.categories,
-      clinicalSummary: riskForm.clinicalSummary,
-    };
+    // Use FormData to support file attachments
+    const fd = new FormData();
+    fd.append("clientId", clientId);
+    fd.append("planTitle", riskForm.riskTitle);
+    fd.append("dateOfAssessment", riskForm.dateOfAssessment);
+    fd.append("assessedBy", riskForm.assessedBy);
+    fd.append("overallRiskLevel", riskForm.overallRiskLevel);
+    fd.append("categories", JSON.stringify(riskForm.categories));
+    fd.append("clinicalSummary", riskForm.clinicalSummary);
+    attachments.forEach(f => fd.append("attachments", f));
 
     try {
       if (editingPlanId) {
-        // Update
         const res = await fetch(`https://admin-panel-backend-alpha.vercel.app/risk-assessment/${editingPlanId}`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
+          headers: { Authorization: `Bearer ${token}` },
+          body: fd,
         });
-
         if (res.ok) {
           const updated = await res.json();
           setPlans((prev) => prev.map((p) => (p._id === editingPlanId ? updated : p)));
           alert("Risk Assessment updated successfully!");
           resetForm();
         } else {
-          alert("Failed to update Risk Assessment");
+          // Fallback to JSON if server doesn't handle FormData for PUT
+          const jsonRes = await fetch(`https://admin-panel-backend-alpha.vercel.app/risk-assessment/${editingPlanId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ clientId, planTitle: riskForm.riskTitle, dateOfAssessment: riskForm.dateOfAssessment, assessedBy: riskForm.assessedBy, overallRiskLevel: riskForm.overallRiskLevel, categories: riskForm.categories, clinicalSummary: riskForm.clinicalSummary }),
+          });
+          if (jsonRes.ok) { const u = await jsonRes.json(); setPlans(prev => prev.map(p => p._id === editingPlanId ? u : p)); alert("Updated!"); resetForm(); }
+          else alert("Failed to update Risk Assessment");
         }
       } else {
-        // Create
         const res = await fetch("https://admin-panel-backend-alpha.vercel.app/risk-assessment", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
+          headers: { Authorization: `Bearer ${token}` },
+          body: fd,
         });
-
         if (res.ok) {
           const newItem = await res.json();
           setPlans((prev) => [newItem, ...prev]);
           alert("Risk Assessment created successfully!");
           resetForm();
         } else {
-          alert("Failed to create Risk Assessment");
+          // Fallback to JSON
+          const jsonRes = await fetch("https://admin-panel-backend-alpha.vercel.app/risk-assessment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ clientId, planTitle: riskForm.riskTitle, dateOfAssessment: riskForm.dateOfAssessment, assessedBy: riskForm.assessedBy, overallRiskLevel: riskForm.overallRiskLevel, categories: riskForm.categories, clinicalSummary: riskForm.clinicalSummary }),
+          });
+          if (jsonRes.ok) { const n = await jsonRes.json(); setPlans(prev => [n, ...prev]); alert("Created!"); resetForm(); }
+          else alert("Failed to create Risk Assessment");
         }
       }
     } catch (error) {
@@ -298,7 +310,7 @@ const ResidentProfileRiskAssessment = ({ clientId }) => {
                           <div className="flex space-x-3 text-white text-sm relative">
                             <button onClick={() => handleView(item)} className="hover:text-blue-500 cursor-pointer" title="View"><FaEye /></button>
                             <button onClick={() => handleEdit(item)} className="hover:text-yellow-400 cursor-pointer" title="Edit"><FaEdit /></button>
-                            <button onClick={() => handleDelete(item._id)} className="hover:text-red-500 cursor-pointer" title="Delete"><FaTrash /></button>
+                            {isAdmin && <button onClick={() => handleDelete(item._id)} className="hover:text-red-500 cursor-pointer" title="Delete (Admin only)"><FaTrash /></button>}
                           </div>
                         </td>
                       </tr>
@@ -394,6 +406,24 @@ const ResidentProfileRiskAssessment = ({ clientId }) => {
                     <textarea value={riskForm.clinicalSummary} onChange={(e)=>setRiskForm({...riskForm, clinicalSummary:e.target.value})} className="w-full p-2 bg-gray-700 rounded text-white" rows={4} />
                  </div>
 
+                 {/* ─── Supporting Documents ─── */}
+                 <div className="border-t border-gray-600 pt-4">
+                   <label className="text-sm text-gray-300 font-semibold flex items-center gap-2 mb-2">
+                     <FaPaperclip /> Supporting Documents
+                   </label>
+                   <p className="text-xs text-gray-400 mb-2">Attach PDFs, care documents, scans, images or external forms.</p>
+                   <input
+                     type="file"
+                     multiple
+                     accept=".pdf,.doc,.docx,image/*"
+                     onChange={e => setAttachments(Array.from(e.target.files))}
+                     className="w-full bg-gray-700 text-white rounded p-2 text-sm"
+                   />
+                   {attachments.length > 0 && (
+                     <p className="text-xs text-green-400 mt-1">{attachments.length} file(s) selected</p>
+                   )}
+                 </div>
+
                  <div className="flex justify-end gap-3 pt-4">
                     <button type="button" onClick={resetForm} className="bg-gray-600 px-4 py-2 rounded text-white">Cancel</button>
                     <button type="submit" className="bg-indigo-600 px-4 py-2 rounded text-white">{editingPlanId ? "Update" : "Save"}</button>
@@ -426,13 +456,24 @@ const ResidentProfileRiskAssessment = ({ clientId }) => {
                      ))}
                    </div>
                 )}
+                
+                {viewPlan.attachments && viewPlan.attachments.length > 0 && (
+                  <div className="border-t border-gray-700 pt-2 mt-2">
+                    <h3 className="font-semibold mb-2 flex items-center gap-2"><FaPaperclip /> Attachments:</h3>
+                    {viewPlan.attachments.map((file, idx) => (
+                      <a key={idx} href={file.url} target="_blank" rel="noreferrer" className="block text-blue-400 hover:underline text-xs mb-1">
+                        {file.name || `Document ${idx + 1}`}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 mt-6 flex-wrap">
                 <button onClick={closeView} className="bg-gray-600 px-4 py-2 rounded text-white">Close</button>
                 <button onClick={() => window.print()} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Print</button>
                 <button onClick={() => handleDownloadPdf(viewPlan)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Export PDF</button>
-                <button onClick={() => { handleDelete(viewPlan._id); closeView(); }} className="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded">Delete</button>
+                {isAdmin && <button onClick={() => { handleDelete(viewPlan._id); closeView(); }} className="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded">Delete</button>}
                 <button onClick={() => { handleEdit(viewPlan); closeView(); }} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Edit</button>
               </div>
             </div>
@@ -456,7 +497,7 @@ const ResidentProfileRiskAssessment = ({ clientId }) => {
                         </div>
                         <div className="flex gap-2">
                             <button onClick={() => { handleView(plan); setShowArchived(false); }} className="text-blue-400 hover:text-blue-300">View</button>
-                            <button onClick={() => handleDelete(plan._id)} className="text-red-400 hover:text-red-300">Delete</button>
+                            {isAdmin && <button onClick={() => handleDelete(plan._id)} className="text-red-400 hover:text-red-300">Delete</button>}
                         </div>
                     </div>
                   ))

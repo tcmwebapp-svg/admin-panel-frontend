@@ -10,11 +10,15 @@ import {
   FaDownload,
   FaTimes,
   FaArchive,
+  FaPaperclip,
 } from "react-icons/fa";
 
 import { MdOutlineHealthAndSafety } from "react-icons/md";
+import { useAuth } from "@/app/context/AuthContext";
 
 const ResidentProfilePBSplan = ({ clientId }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Admin";
   const [showForm, setShowForm] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
   const [plans, setPlans] = useState([]);
@@ -23,6 +27,7 @@ const ResidentProfilePBSplan = ({ clientId }) => {
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [showArchived, setShowArchived] = useState(false);
   const [archivedPlans, setArchivedPlans] = useState([]);
+  const [pbsAttachments, setPbsAttachments] = useState([]);
 
   const [formData, setFormData] = useState({
     notes: "",
@@ -386,13 +391,15 @@ const ResidentProfilePBSplan = ({ clientId }) => {
                               <FaEye />
                             </button>
 
-                            <button
-                              onClick={() => handleDelete(item._id)}
-                              className="hover:text-red-500 cursor-pointer"
-                              title="Delete"
-                            >
-                              <FaTrash />
-                            </button>
+                            {isAdmin && (
+                              <button
+                                onClick={() => handleDelete(item._id)}
+                                className="hover:text-red-500 cursor-pointer"
+                                title="Delete (Admin only)"
+                              >
+                                <FaTrash />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>

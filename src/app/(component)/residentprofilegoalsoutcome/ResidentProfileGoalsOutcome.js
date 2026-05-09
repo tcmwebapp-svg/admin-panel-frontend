@@ -8,16 +8,21 @@ import {
   FaEye,
   FaTimes,
   FaArchive,
+  FaPaperclip,
 } from "react-icons/fa";
 import { LuGoal } from "react-icons/lu";
+import { useAuth } from "@/app/context/AuthContext";
 
 const ResidentProfileGoalsOutcome = ({ clientId }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Admin";
   const [goals, setGoals] = useState([]);
   const [archivedGoals, setArchivedGoals] = useState([]);
   const [showGoalForm, setShowGoalForm] = useState(false);
   const [editingGoalId, setEditingGoalId] = useState(null);
   const [viewGoal, setViewGoal] = useState(null);
   const [showArchived, setShowArchived] = useState(false);
+  const [attachments, setAttachments] = useState([]);
 
   const [goalForm, setGoalForm] = useState({
     title: "",
@@ -63,6 +68,7 @@ const ResidentProfileGoalsOutcome = ({ clientId }) => {
   const resetGoalForm = () => {
     setEditingGoalId(null);
     setGoalForm({ title: "", startDate: "", targetDate: "", metric: "", status: "" });
+    setAttachments([]);
     setShowGoalForm(false);
   };
 
@@ -263,11 +269,11 @@ const ResidentProfileGoalsOutcome = ({ clientId }) => {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex space-x-3 text-white text-sm">
-                           <button onClick={() => handleView(g)} className="hover:text-blue-500 cursor-pointer" title="View"><FaEye /></button>
-                           <button onClick={() => handleGoalEdit(g)} className="hover:text-yellow-400 cursor-pointer" title="Edit"><FaEdit /></button>
-                           <button onClick={() => handleGoalDelete(g._id)} className="hover:text-red-500 cursor-pointer" title="Delete"><FaTrash /></button>
-                        </div>
+                         <div className="flex space-x-3 text-white text-sm">
+                            <button onClick={() => handleView(g)} className="hover:text-blue-500 cursor-pointer" title="View"><FaEye /></button>
+                            <button onClick={() => handleGoalEdit(g)} className="hover:text-yellow-400 cursor-pointer" title="Edit"><FaEdit /></button>
+                            {isAdmin && <button onClick={() => handleGoalDelete(g._id)} className="hover:text-red-500 cursor-pointer" title="Delete (Admin only)"><FaTrash /></button>}
+                         </div>
                       </td>
                     </tr>
                   ))
@@ -316,6 +322,22 @@ const ResidentProfileGoalsOutcome = ({ clientId }) => {
                     <option value="In Progress">In Progress</option>
                     <option value="Complete">Complete</option>
                   </select>
+                </div>
+
+                {/* ─── Supporting Documents ─── */}
+                <div className="border-t border-gray-600 pt-4">
+                  <label className="text-sm text-gray-300 font-semibold flex items-center gap-2 mb-2">
+                    <FaPaperclip /> Supporting Documents
+                  </label>
+                  <p className="text-xs text-gray-400 mb-2">Attach PDFs, care documents, scans, images or external forms.</p>
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,image/*"
+                    onChange={e => setAttachments(Array.from(e.target.files))}
+                    className="w-full bg-gray-700 text-white rounded p-2 text-sm"
+                  />
+                  {attachments.length > 0 && <p className="text-xs text-green-400 mt-1">{attachments.length} file(s) selected</p>}
                 </div>
 
                 <div className="flex justify-between pt-4">
@@ -394,7 +416,7 @@ const ResidentProfileGoalsOutcome = ({ clientId }) => {
                 <button onClick={closeView} className="bg-gray-600 px-4 py-1.5 rounded hover:bg-gray-700 text-sm font-medium">Close</button>
                 <button onClick={() => window.print()} className="bg-red-600 px-4 py-1.5 rounded hover:bg-red-700 text-sm text-white font-medium">Print</button>
                 <button onClick={() => handleDownloadPdf(viewGoal)} className="bg-green-600 px-4 py-1.5 rounded hover:bg-green-700 text-sm text-white font-medium">Export PDF</button>
-                <button onClick={() => { handleGoalDelete(viewGoal._id); closeView(); }} className="bg-red-700 px-4 py-1.5 rounded hover:bg-red-800 text-sm text-white font-medium">Delete</button>
+                {isAdmin && <button onClick={() => { handleGoalDelete(viewGoal._id); closeView(); }} className="bg-red-700 px-4 py-1.5 rounded hover:bg-red-800 text-sm text-white font-medium">Delete</button>}
                 <button onClick={() => { handleGoalEdit(viewGoal); closeView(); }} className="bg-blue-600 px-4 py-1.5 rounded hover:bg-blue-700 text-sm text-white font-medium">Edit</button>
               </div>
             </div>
@@ -418,7 +440,7 @@ const ResidentProfileGoalsOutcome = ({ clientId }) => {
                         </div>
                         <div className="flex gap-2">
                             <button onClick={() => { handleView(g); setShowArchived(false); }} className="text-blue-400 hover:text-blue-300">View</button>
-                            <button onClick={() => handleGoalDelete(g._id)} className="text-red-400 hover:text-red-300">Delete</button>
+                            {isAdmin && <button onClick={() => handleGoalDelete(g._id)} className="text-red-400 hover:text-red-300">Delete</button>}
                         </div>
                     </div>
                   ))

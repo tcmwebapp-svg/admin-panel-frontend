@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MDS System - Complete User Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;700&display=swap');
+
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --secondary: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --dark: #111827;
+      --light: #f9fafb;
+      --text: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.8;
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 40px;
+      background: #f3f4f6;
+      color: var(--text);
+    }
+
+    .page {
+      background: white;
+      padding: 60px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .cover {
+      height: 297mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      color: white;
+      padding: 60px;
+      margin-bottom: 50px;
+      border-radius: 12px;
+    }
+
+    .cover h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 4rem;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .cover p {
+      font-size: 1.8rem;
+      opacity: 0.9;
+    }
+
+    .cover .version {
+      margin-top: 100px;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px 25px;
+      border-radius: 50px;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      color: var(--dark);
+      border-bottom: 4px solid var(--primary);
+      padding-bottom: 15px;
+      margin-top: 60px;
+      font-size: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    h2 {
+      font-family: 'Outfit', sans-serif;
+      color: var(--primary-dark);
+      margin-top: 45px;
+      border-left: 8px solid var(--primary);
+      padding-left: 20px;
+      font-size: 1.8rem;
+    }
+
+    h3 {
+      color: #4b5563;
+      margin-top: 30px;
+      font-size: 1.4rem;
+      background: #f3f4f6;
+      padding: 10px 20px;
+      border-radius: 8px;
+    }
+
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 30px 0;
+      font-size: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 16px;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--primary);
+      color: white;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+
+    .btn-ref {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: white;
+      margin: 2px;
+      white-space: nowrap;
+    }
+
+    .btn-add { background-color: var(--secondary); }
+    .btn-edit { background-color: var(--warning); }
+    .btn-delete { background-color: var(--danger); }
+    .btn-view { background-color: var(--info); }
+    .btn-save { background-color: var(--primary); }
+    .btn-download { background-color: #6366f1; }
+
+    .alert-box {
+      background: #fffbeb;
+      border-left: 6px solid var(--warning);
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 8px;
+    }
+
+    .success-box {
+      background: #ecfdf5;
+      border-left: 6px solid var(--secondary);
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 8px;
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      background: var(--primary);
+      color: white;
+      padding: 20px 40px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+      border: none;
+      z-index: 1000;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .print-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(79, 70, 229, 0.5);
+    }
+
+    @media print {
+      @page {
+        margin: 0; /* This removes the browser's footer/header lines */
+      }
+      body {
+        background: white;
+        padding: 15mm; /* Simulated page margin */
+        margin: 0;
+        width: 100%;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page {
+        box-shadow: none !important;
+        margin: 0 0 20px 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        page-break-after: auto; /* Let browser handle natural breaks */
+        height: auto !important;
+        min-height: 0 !important;
+      }
+      .cover {
+        page-break-after: always;
+        height: 270mm; /* Slightly less than A4 to be safe */
+      }
+      .feature-card, table, .toc {
+        page-break-inside: avoid; /* Prevent splitting cards/tables across pages */
+      }
+      h1, h2 {
+        page-break-after: avoid; /* Don't leave headings alone at bottom */
+      }
+    }
+
+    .feature-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      background: #fff;
+    }
+
+    .icon-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .icon-list li {
+      padding: 10px 0;
+      border-bottom: 1px dashed #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon-list li:before {
+      content: "⭐";
+    }
+
+    .toc {
+      columns: 2;
+      column-gap: 40px;
+    }
+
+    .toc li {
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button class="print-btn no-print" onclick="window.print()">📥 Download as PDF</button>
+
+  <div class="cover">
+    <h1>🏥 MDS Care System</h1>
+    <p>Complete User Manual & Guide</p>
+    <div style="margin-top: 50px; font-size: 1.4rem;">Detailed breakdown of every module, section, and button</div>
+    <div class="version">Version 2.0 - April 2026</div>
+  </div>
+
+  <div class="page">
+    <h1>📑 Table of Contents</h1>
+    <div class="toc">
+      <ol style="font-size: 1.2rem;">
+        <li><strong>System Overview</strong></li>
+        <li><strong>Dashboard Module</strong></li>
+        <li><strong>Resident Profile Management</strong></li>
+        <li><strong>Care Planning</strong></li>
+        <li><strong>Medication (eMAR)</strong></li>
+        <li><strong>Incident Reports</strong></li>
+        <li><strong>Social Activity</strong></li>
+        <li><strong>Template Management</strong></li>
+        <li><strong>HR & Staff Management</strong></li>
+        <li><strong>Training Module</strong></li>
+        <li><strong>Compliance & Audits</strong></li>
+        <li><strong>Analytics & Reporting</strong></li>
+        <li><strong>User Management</strong></li>
+        <li><strong>Document Management</strong></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="page">
+    <h1>🚀 Quick & Easy System Reference</h1>
+    <p>This is a simplified guide to help you understand what each part of the system does and how to use it quickly.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Module Name</th>
+          <th>What is it? (Simple)</th>
+          <th>How to use it?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dashboard</strong></td>
+          <td>Your main control center.</td>
+          <td>Look here to see alerts and total numbers (Stats).</td>
+        </tr>
+        <tr>
+          <td><strong>Resident Profile</strong></td>
+          <td>The "Digital Folder" for a patient.</td>
+          <td>Open this to see everything about a resident (Allergies, Care plans, etc.).</td>
+        </tr>
+        <tr>
+          <td><strong>Care Planning</strong></td>
+          <td>Instruction manual for a resident.</td>
+          <td>Use this to write HOW a resident should be looked after.</td>
+        </tr>
+        <tr>
+          <td><strong>Medication (eMAR)</strong></td>
+          <td>Dawai (Medicine) tracker.</td>
+          <td>Click "GIVE" when you give medicine so the system records it.</td>
+        </tr>
+        <tr>
+          <td><strong>Incident Reports</strong></td>
+          <td>Accident log.</td>
+          <td>Fill this out immediately if someone falls or gets hurt.</td>
+        </tr>
+        <tr>
+          <td><strong>HR / Staff Profile</strong></td>
+          <td>Staff records and documents.</td>
+          <td>Check here for staff contracts, DBS, and training status.</td>
+        </tr>
+        <tr>
+          <td><strong>Training</strong></td>
+          <td>Learning tracker.</td>
+          <td>Look for Red dots; they mean staff need to redo their training.</td>
+        </tr>
+        <tr>
+          <td><strong>Compliance</strong></td>
+          <td>Safety checks.</td>
+          <td>Record daily checks like water temp or fire alarms here.</td>
+        </tr>
+        <tr>
+          <td><strong>Social Activity</strong></td>
+          <td>Fun activities and visits.</td>
+          <td>Log family visits or games the residents played.</td>
+        </tr>
+        <tr>
+          <td><strong>Assessments</strong></td>
+          <td>Special check-ups.</td>
+          <td>Detailed forms for specific needs like Nutrition or Skin care.</td>
+        </tr>
+        <tr>
+          <td><strong>Analytics</strong></td>
+          <td>Performance reports.</td>
+          <td>Use this to see graphs of how the home is doing over time.</td>
+        </tr>
+        <tr>
+          <td><strong>User Management</strong></td>
+          <td>System keys/passwords.</td>
+          <td>Add new staff and give them access to the system.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>🏗️ Section 1: System Overview</h1>
+    <p>This system is designed to fully digitize care homes, replacing paperwork with a secure, accessible digital platform.</p>
+    
+    <div class="success-box">
+      <strong>🎯 Objective:</strong> Improve quality of care for residents while meeting regulatory standards (e.g., CQC).
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Description</th>
+          <th>Functionality</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dashboard</strong></td>
+          <td>Full overview</td>
+          <td>Stats and Alerts</td>
+        </tr>
+        <tr>
+          <td><strong>Resident Profile</strong></td>
+          <td>Resident records</td>
+          <td>Care Plans, Medical Details</td>
+        </tr>
+        <tr>
+          <td><strong>eMAR</strong></td>
+          <td>Medication system</td>
+          <td>Stock and Dosage tracking</td>
+        </tr>
+        <tr>
+          <td><strong>Staff Management</strong></td>
+          <td>Staff records</td>
+          <td>Rota and Training</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>📊 Section 2: Dashboard</h1>
+    <p>The dashboard is your main control screen for monitoring the entire care home status.</p>
+    
+    <h3>Dashboard Elements & Buttons:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Element / Button</th>
+          <th>Description</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Search Bar 🔍</strong></td>
+          <td>Used to find any Resident or Staff member</td>
+          <td>Type name</td>
+        </tr>
+        <tr>
+          <td><strong>Alert Bell 🔔</strong></td>
+          <td>Important notifications (Low stock, overdue reviews)</td>
+          <td>Click for details</td>
+        </tr>
+        <tr>
+          <td><strong>Stats Cards 📈</strong></td>
+          <td>Total Residents, Occupancy rate, Staff on duty</td>
+          <td>View Stats</td>
+        </tr>
+        <tr>
+          <td><strong>Quick Links ⚡</strong></td>
+          <td>Shortcuts: Add Resident, Report Incident, View Rota</td>
+          <td>Instant access</td>
+        </tr>
+        <tr>
+          <td><strong>Occupancy Chart 📊</strong></td>
+          <td>Visual graph of room occupancy</td>
+          <td>Monitor rooms</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>👥 Section 3: Resident Profile (Detailed)</h1>
+    <p>The Resident Profile is the central hub for all information related to a specific resident. It is divided into several tabs for easy management:</p>
+
+    <div class="feature-card">
+      <h3>1. About Me</h3>
+      <p>This is the primary information page. It includes:</p>
+      <ul class="icon-list">
+        <li><strong>Personal Details:</strong> Full name, DOB, NHS number, and NI number.</li>
+        <li><strong>Medical Profile:</strong> Primary diagnosis, diagnosis date, and a list of all allergies.</li>
+        <li><strong>Contacts:</strong> Detailed info for Next of Kin (NOK), GP, and specialists.</li>
+        <li><strong>Preferences:</strong> "Important To Me", "Please DO", and "Please DON'T" lists to personalize care.</li>
+      </ul>
+      <p><strong>Buttons:</strong> <span class="btn-ref btn-edit">Edit</span> to change info, <span class="btn-ref btn-save">Save</span> to commit changes.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>2. Care Plans</h3>
+      <p>Manage structured care delivery plans.</p>
+      <ul class="icon-list">
+        <li>Includes Communication, Mobility, Dietary, and Personal Care needs.</li>
+        <li>Tracks review dates to ensure plans are never outdated.</li>
+      </ul>
+      <p><strong>Buttons:</strong> <span class="btn-ref btn-add">+ Add Care Plan</span>, <span class="btn-ref btn-view">View History</span>.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>3. Medication (eMAR)</h3>
+      <p>Full digital medication record.</p>
+      <ul class="icon-list">
+        <li><strong>Active Orders:</strong> See what medications are currently prescribed.</li>
+        <li><strong>Admin Log:</strong> A history of every dose given, missed, or refused, including who gave it.</li>
+      </ul>
+      <p><strong>Buttons:</strong> <span class="btn-ref btn-save">GIVE</span>, <span class="btn-ref btn-delete">REFUSE</span>.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>4. Daily Logs & Handovers</h3>
+      <p>Tracks the day-to-day life of the resident.</p>
+      <ul class="icon-list">
+        <li><strong>Daily Logs:</strong> Staff record mood, health indicators (HR, Bristol score), and notes.</li>
+        <li><strong>Handovers:</strong> Summary notes passed between shifts to ensure continuity of care.</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>5. PBS, Risk & Goals</h3>
+      <p>Clinical and behavioral management.</p>
+      <ul class="icon-list">
+        <li><strong>PBS Plans:</strong> Strategies for Positive Behaviour Support.</li>
+        <li><strong>Risk Assessments:</strong> Identifying and mitigating risks like falls or injuries.</li>
+        <li><strong>Goals:</strong> Setting and tracking outcomes for the resident's development.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page">
+    <h1>👔 Section 9: Staff Profile (Detailed)</h1>
+    <p>The Staff Profile manages all human resources data for each employee:</p>
+
+    <div class="feature-card">
+      <h3>1. Personal & Employment</h3>
+      <p>Core HR data including contact info, address, position, and contract type.</p>
+      <ul class="icon-list">
+        <li><strong>Compliance:</strong> Tracks DBS status, Right to Work, and Visa expiry.</li>
+        <li><strong>Next of Kin:</strong> Emergency contact details for the staff member.</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>2. Scheduling & Rota</h3>
+      <p>An interactive calendar showing the staff member's assigned shifts.</p>
+      <p><strong>Action:</strong> Use the calendar to see upcoming duties or check past attendance.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>3. Training & Performance</h3>
+      <p>Ensuring staff are qualified and productive.</p>
+      <ul class="icon-list">
+        <li><strong>Training:</strong> Lists all completed and pending training modules with certificates.</li>
+        <li><strong>Performance:</strong> Tracks Holiday allowance, Appraisals, and Supervisions.</li>
+      </ul>
+      <p><strong>Status Colors:</strong> <span style="color:green">Green (Current)</span>, <span style="color:orange">Yellow (Expiring)</span>, <span style="color:red">Red (Expired)</span>.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>4. Pay & Documents</h3>
+      <p>Administrative and financial data.</p>
+      <ul class="icon-list">
+        <li><strong>Pay:</strong> Bank account details and tax codes for payroll.</li>
+        <li><strong>Documents:</strong> A secure folder for contracts, ID, and disciplinary records.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page">
+    <h1>📝 Section 4: Care Planning</h1>
+    <p>Care plans are designed based on the individual needs of each resident.</p>
+    
+    <h3>Buttons & Functionality:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Button</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="btn-ref btn-add">+ Add Care Plan</span></td>
+          <td>Create a new care plan</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-edit">Update Plan</span></td>
+          <td>Modify an existing care plan</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-download">Download PDF</span></td>
+          <td>Print the care plan to PDF</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-view">View History</span></td>
+          <td>View past plans and changes</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>💊 Section 5: Medication (eMAR)</h1>
+    <p>Electronic Medication Administration Record (eMAR) for managing medications.</p>
+
+    <div class="feature-card">
+      <h3>Medication Management Buttons:</h3>
+      <ul class="icon-list">
+        <li><strong>GIVE:</strong> Medication administered (Stock automatically reduced).</li>
+        <li><strong>REFUSE:</strong> Resident refused medication (Reason mandatory).</li>
+        <li><strong>PRN:</strong> "As needed" medication (Reason must be recorded).</li>
+        <li><strong>Stock Alert:</strong> Displays red alert if stock is low.</li>
+      </ul>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Button</th>
+          <th>Color</th>
+          <th>Function</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>GIVE</strong></td>
+          <td>Green</td>
+          <td>Medication given</td>
+        </tr>
+        <tr>
+          <td><strong>REFUSE</strong></td>
+          <td>Red</td>
+          <td>Medication refused</td>
+        </tr>
+        <tr>
+          <td><strong>Add Medication</strong></td>
+          <td>Blue</td>
+          <td>Add new medication prescription</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>📋 Section 6: Incident Reports</h1>
+    <p>Incidents must be recorded immediately for safety and compliance.</p>
+
+    <h3>How to Report?</h3>
+    <ol>
+      <li>Click the <strong>+ New Incident</strong> button.</li>
+      <li>Select incident type (Fall, Injury, Medication Error).</li>
+      <li>Fill in details, add witnesses, and upload photos if necessary.</li>
+      <li>Submit; Manager will receive an instant notification.</li>
+    </ol>
+
+    <h3>Buttons:</h3>
+    <ul>
+      <li><span class="btn-ref btn-add">New Incident</span> - Create new report</li>
+      <li><span class="btn-ref btn-view">View Details</span> - Full report details</li>
+      <li><span class="btn-ref btn-download">Export PDF</span> - For printing/filing</li>
+      <li><span class="btn-ref btn-edit">Follow-up</span> - Record subsequent actions</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>🎨 Section 7: Social Activity</h1>
+    <p>For tracking resident social life and engagement.</p>
+    
+    <h3>Categories:</h3>
+    <ul>
+      <li>Family Visits</li>
+      <li>Hobbies</li>
+      <li>Games</li>
+      <li>Social Engagement</li>
+    </ul>
+
+    <h3>Buttons & Actions:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Button</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="btn-ref btn-add">Add Activity</span></td>
+          <td>Record a new activity</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-view">View Attachments</span></td>
+          <td>View photos and videos</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-download">Download CSV</span></td>
+          <td>Export records to Excel/CSV</td>
+        </tr>
+        <tr>
+          <td><span class="btn-ref btn-download">Download PDF</span></td>
+          <td>Download a PDF report</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page">
+    <h1>📄 Section 8: Template Management</h1>
+    <p>Managing standard forms and templates for the facility.</p>
+
+    <h3>Buttons:</h3>
+    <ul class="icon-list">
+      <li><span class="btn-ref btn-add">Add Record:</span> Upload a new template.</li>
+      <li><span class="btn-ref btn-view">View Template:</span> Open and view the document.</li>
+      <li><span class="btn-ref btn-edit">Edit:</span> Change title or visibility.</li>
+      <li><span class="btn-ref btn-delete">Delete:</span> Remove an old template.</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>🎓 Section 10: Training Module</h1>
+    <p>Track staff training progress and expiry dates.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Indicator</th>
+          <th>Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Up to Date</strong></td>
+          <td>Green ✅</td>
+          <td>Training completed</td>
+        </tr>
+        <tr>
+          <td><strong>Expiring Soon</strong></td>
+          <td>Yellow ⚠️</td>
+          <td>Expires within 30 days</td>
+        </tr>
+        <tr>
+          <td><strong>Expired</strong></td>
+          <td>Red ❌</td>
+          <td>Training has expired</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Buttons:</strong> <span class="btn-ref btn-add">Add Training</span> <span class="btn-ref btn-save">Mark Complete</span> <span class="btn-ref btn-add">Upload Certificate</span></p>
+  </div>
+
+  <div class="page">
+    <h1>✅ Section 11: Compliance & Audits</h1>
+    <p>Record of regulatory compliance and periodic checks.</p>
+
+    <h3>Daily/Weekly Checks:</h3>
+    <ul>
+      <li>Fire Alarm Tests</li>
+      <li>Water Temperatures</li>
+      <li>Fridge Temperatures</li>
+      <li>Emergency Lighting</li>
+    </ul>
+
+    <h3>Buttons:</h3>
+    <ul>
+      <li><span class="btn-ref btn-add">Add Check</span> - Record a new compliance check.</li>
+      <li><span class="btn-ref btn-save">Mark Complete</span> - Mark check as finished.</li>
+      <li><span class="btn-ref btn-add">Upload Evidence</span> - Attach photo or certificate evidence.</li>
+      <li><span class="btn-ref btn-download">Export Report</span> - Download audit reports.</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>📈 Section 12: Analytics & Reporting</h1>
+    <p>Reports and audit logs for the entire facility.</p>
+
+    <h3>Tabs:</h3>
+    <ol>
+      <li><strong>Analytics:</strong> Performance overview charts.</li>
+      <li><strong>Compliance Logs:</strong> Compliance check history.</li>
+      <li><strong>Care Plan Logs:</strong> History of care plan changes.</li>
+      <li><strong>Medication Logs:</strong> History of medication administration.</li>
+    </ol>
+
+    <h3>Buttons:</h3>
+    <ul class="icon-list">
+      <li><span class="btn-ref btn-download">Export PDF / CSV:</span> Download complete reports.</li>
+      <li><span class="btn-ref btn-delete">Delete Log:</span> Remove old records (Admin only).</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>🔐 Section 13: User Management (Roles & Permissions)</h1>
+    <p>This section allows the Administrator to control who can access the system and what they are allowed to see or change.</p>
+
+    <div class="feature-card">
+      <h3>1. Administrator (Admin)</h3>
+      <p><strong>Role:</strong> Full System Controller.</p>
+      <ul class="icon-list">
+        <li><strong>Full Access:</strong> Can see and edit every module.</li>
+        <li><strong>User Control:</strong> Only Admin can Add, Edit, or Delete other users.</li>
+        <li><strong>Security:</strong> Can reset passwords and change system settings.</li>
+        <li><strong>Deletion:</strong> Only Admin has the power to delete important records (Residents, Staff, Incident Reports).</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>2. Staff Member</h3>
+      <p><strong>Role:</strong> Daily Care Provider.</p>
+      <ul class="icon-list">
+        <li><strong>Operational Access:</strong> Can add Daily Logs, update Care Plans, and record Medication.</li>
+        <li><strong>No Deletion:</strong> Cannot delete profiles or system-wide records.</li>
+        <li><strong>Limited HR:</strong> Can see their own profile but cannot see other staff members' private data (like bank details).</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>3. External User (Auditor / Family)</h3>
+      <p><strong>Role:</strong> Guest Viewer.</p>
+      <ul class="icon-list">
+        <li><strong>Restricted Access:</strong> Can only see specific pages permitted by the Admin.</li>
+        <li><strong>View-Only:</strong> Cannot add, edit, or delete anything.</li>
+        <li><strong>Audit Ready:</strong> Perfect for CQC inspectors or family members who only need to check progress.</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h3>4. Client (Resident)</h3>
+      <p><strong>Role:</strong> Self-View (Optional).</p>
+      <ul class="icon-list">
+        <li><strong>Personal View:</strong> If given access, a resident can see their own care plan and progress.</li>
+        <li><strong>Privacy:</strong> They cannot see any other resident's data or staff information.</li>
+      </ul>
+    </div>
+
+    <p><strong>Buttons:</strong> <span class="btn-ref btn-add">Add User</span>, <span class="btn-ref btn-edit">Manage Permissions</span>, <span class="btn-ref btn-delete">Remove Access</span>.</p>
+  </div>
+
+  <div class="page">
+    <h1>📂 Section 14: Document Management</h1>
+    <p>Central repository for all facility documents.</p>
+
+    <h3>Buttons:</h3>
+    <ul>
+      <li><span class="btn-ref btn-add">Upload File:</span> Upload a new document.</li>
+      <li><span class="btn-ref btn-view">Preview:</span> Preview the file.</li>
+      <li><span class="btn-ref btn-download">Download:</span> Save file to your computer.</li>
+      <li><span class="btn-ref btn-edit">Move/Rename:</span> Change folder or file name.</li>
+    </ul>
+  </div>
+
+  <div class="page">
+    <h1>🛠️ Detailed Module Guide (How it works)</h1>
+    <p>This section explains the step-by-step workflow for the most important parts of the system.</p>
+
+    <div class="feature-card">
+      <h3>1. Managing a Resident (Full Workflow)</h3>
+      <p><strong>Step 1:</strong> Add a new resident in <strong>Resident Management</strong>.</p>
+      <p><strong>Step 2:</strong> Go to their profile and fill out <strong>About Me</strong> (Allergies are critical!).</p>
+      <p><strong>Step 3:</strong> Create a <strong>Care Plan</strong> so staff know what to do.</p>
+      <p><strong>Step 4:</strong> Perform <strong>Assessments</strong> (Nutrition, Skin, Risk) to identify any health dangers.</p>
+      <p><strong>Step 5:</strong> Staff record <strong>Daily Logs</strong> every day to show they are providing care.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>2. Giving Medication (eMAR)</h3>
+      <p><strong>Setup:</strong> First, add the medication to the resident's profile.</p>
+      <p><strong>Execution:</strong> When it's time for medicine, find the resident in <strong>Medication Management</strong>, check the dose, and click <strong>GIVE</strong>.</p>
+      <p><strong>Safety:</strong> If you cannot give the medicine, click <strong>REFUSE</strong> and type the reason (e.g., patient sleeping).</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>3. Reporting an Incident</h3>
+      <p><strong>Immediate Action:</strong> As soon as an accident happens, open <strong>Incident Reports</strong>.</p>
+      <p><strong>Data Entry:</strong> Select the type of incident, write exactly what happened, and add any evidence (photos).</p>
+      <p><strong>Review:</strong> The Manager checks the report and adds <strong>Follow-up</strong> actions to prevent it from happening again.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>4. Audits & Compliance</h3>
+      <p><strong>Daily Routine:</strong> Use the <strong>Compliance</strong> module to record fire safety, water temp, and cleaning checks.</p>
+      <p><strong>Evidence:</strong> Upload photos of signed sheets or meter readings as proof for inspectors.</p>
+    </div>
+  </div>
+
+  <div class="page">
+    <div style="text-align: center; margin-top: 100px;">
+      <h2 style="border: none;">End of Guide</h2>
+      <p>Contact the system administrator if you need further assistance.</p>
+      <p style="opacity: 0.5;">© 2026 MDS Care System - All Rights Reserved</p>
+    </div>
+  </div>
+
+</body>
+
+</html>
